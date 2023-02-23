@@ -37,10 +37,7 @@ jobs:
             - "/go/pkg/mod"
             
 workflows:
-  sample:
-    when: 
-      or:
-        - equal: [ main, << pipeline.git.branch >> ]
+  build:
     jobs:
       - jbuild
-
+    when: always
