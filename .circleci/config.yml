@@ -3,7 +3,7 @@ version: 2.1
 
 
 jobs:
-  build:
+  jbuild:
     working_directory: ~/repo
     
     docker:
@@ -37,5 +37,10 @@ jobs:
             - "/go/pkg/mod"
             
 workflows:
-  sample: 
-      - build
+  sample:
+    when: 
+      or:
+        - equal: [ main, << pipeline.git.branch >> ]
+    jobs:
+      - jbuild
+
