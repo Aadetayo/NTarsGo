@@ -1,0 +1,41 @@
+
+version: 2.1
+
+
+jobs:
+  build:
+    working_directory: ~/repo
+    
+    docker:
+      - image: cimg/go:1.15
+    
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - go-mod-v4-{{ checksum "go.sum" }}
+      - run:
+          name: tars2go
+          command: |
+            cd tars/tools/tars2go
+            go build ./...
+            go test ./...
+      - run:
+          name: tarsgo
+          command: |
+            cd tars/tools/tarsgo
+            go build ./...
+            go test ./...
+      - run:
+          name: build
+          command:  |
+            go mod tidy
+            go build ./tars
+      - save_cache:
+          key: go-mod-v4-{{ checksum "go.sum" }}
+          paths:
+            - "/go/pkg/mod"
+            
+workflows:
+  sample: 
+      - build
