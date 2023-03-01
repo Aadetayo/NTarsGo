@@ -1,0 +1,47 @@
+format_version: 10
+pipelines:
+  New-pipe:
+    group: defaultGroup
+    label_template: ${COUNT}
+    lock_behavior: none
+    display_order: -1
+    materials:
+      git-3a64977:
+        git: https://github.com/Aadetayo/NTarsGo.git
+        shallow_clone: false
+        auto_update: true
+        branch: master
+    stages:
+    - jjbuild:
+        fetch_materials: true
+        keep_artifacts: true
+        clean_workspace: false
+        approval:
+          type: success
+          allow_only_on_success: false
+        jobs:
+          - name: "tars2go"
+            tasks:
+              - exec:
+                  command: "cd tars/tools/tars2go"
+              - exec:
+                  command: "go build ./..."
+              - exec:
+                  command: "go test ./..."
+          - name: "tarsgo"
+            tasks:
+              - exec:
+                  command: "cd tars/tools/tarsgo"
+              - exec:
+                  command: "go build ./..."
+              - exec:
+                  command: "go test ./..."
+          - name: "build"
+            tasks:
+              - exec:
+                  command: "go mod tidy"
+              - exec:
+                  command: "go build ./tars"
+            artifacts:
+              - source: "tars"
+                destination: "tars-artifacts"
